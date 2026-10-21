@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "author": "Raffie Aditya",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 42, "left": 220, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -110, "left": -190, "attrs": { "distance": "120" } },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 80, "left": -175, "attrs": { "value": "300" } },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -145, "left": 505, "attrs": { "pins": "i2c" } },
+    { "type": "wokwi-servo", "id": "servo1", "top": 45, "left": 520, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 190, "left": 500, "attrs": { "transistor": "npn" } },
+    { "type": "wokwi-buzzer", "id": "buzzer1", "top": 300, "left": 470, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 405, "left": 480, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r-led", "top": 410, "left": 400, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r-echo-top", "top": -70, "left": -25, "attrs": { "value": "1000" } },
+    { "type": "wokwi-resistor", "id": "r-echo-bottom", "top": -25, "left": 45, "attrs": { "value": "2000" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "ultrasonic1:VCC", "esp:5V", "red", [] ],
+    [ "ultrasonic1:GND", "esp:GND.1", "black", [] ],
+    [ "ultrasonic1:TRIG", "esp:5", "green", [] ],
+    [ "ultrasonic1:ECHO", "r-echo-top:1", "orange", [] ],
+    [ "r-echo-top:2", "esp:18", "orange", [] ],
+    [ "r-echo-top:2", "r-echo-bottom:1", "orange", [] ],
+    [ "r-echo-bottom:2", "esp:GND.1", "black", [] ],
+
+    [ "pot1:VCC", "esp:3V3", "red", [] ],
+    [ "pot1:GND", "esp:GND.1", "black", [] ],
+    [ "pot1:SIG", "esp:34", "blue", [] ],
+
+    [ "lcd1:VCC", "esp:5V", "red", [] ],
+    [ "lcd1:GND", "esp:GND.1", "black", [] ],
+    [ "lcd1:SDA", "esp:21", "blue", [] ],
+    [ "lcd1:SCL", "esp:22", "green", [] ],
+
+    [ "servo1:V+", "esp:5V", "red", [] ],
+    [ "servo1:GND", "esp:GND.1", "black", [] ],
+    [ "servo1:PWM", "esp:13", "purple", [] ],
+
+    [ "relay1:VCC", "esp:5V", "red", [] ],
+    [ "relay1:GND", "esp:GND.1", "black", [] ],
+    [ "relay1:IN", "esp:4", "orange", [] ],
+
+    [ "buzzer1:1", "esp:2", "purple", [] ],
+    [ "buzzer1:2", "esp:GND.1", "black", [] ],
+
+    [ "esp:15", "r-led:1", "green", [] ],
+    [ "r-led:2", "led1:A", "green", [] ],
+    [ "led1:C", "esp:GND.1", "black", [] ]
+  ],
+  "dependencies": {}
+}
