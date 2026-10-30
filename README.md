@@ -1,6 +1,26 @@
 # IoT Floodgate Monitoring & Control System
 
+> **Submisi SIC8 (Samsung Innovation Campus) - Stage 2**  
+> **Nama Tim:** Dikit Lagi KKN Men
+
 Sistem monitoring ketinggian air dan pengendalian pintu air otomatis berbasis ESP32 menggunakan protokol MQTT, dilengkapi dashboard visualisasi real-time berbasis Python.
+
+## Informasi Tim
+
+Proyek ini disusun dan diajukan sebagai submisi untuk program **Samsung Innovation Campus (SIC) Batch 8 – Stage 2**:
+
+- **Nama Tim:** Dikit Lagi KKN Men
+- **Anggota Tim & Kontribusi:**
+
+| No | Nama Anggota | Peran dan Kontribusi |
+| :---: | :--- | :--- |
+| 1 | **Yuma Hazza Yuditama** | Mengkoordinasikan perencanaan proyek, merumuskan masalah dan tujuan, serta menyusun bagian latar belakang, target pengguna, dan *use case* dalam laporan. |
+| 2 | **Reynaldi Bertinus Hutagaol** | Merancang dan menyusun rangkaian simulasi Wokwi, menentukan koneksi komponen ke GPIO ESP32, serta mendokumentasikan komponen dan *wiring*. |
+| 3 | **Raffie Aditya Akbar** | Mengembangkan program ESP32, termasuk pembacaan sensor, logika status NORMAL/SIAGA/BAHAYA, pengendalian aktuator, pengiriman telemetri MQTT, serta membuat video demo. |
+| 4 | **Syuraih Umar Khotthob** | Mengembangkan dashboard Python berbasis Matplotlib, menguji penerimaan data MQTT dan tampilan grafik, serta membantu mengintegrasikan hasil pengujian dan dokumentasi proyek. |
+
+> **Kontribusi Bersama (Seluruh Anggota):**  
+> Membahas rancangan sistem, meninjau hasil simulasi dan pengujian, serta mengevaluasi dan menyepakati isi laporan akhir.
 
 ## Fitur Utama
 
@@ -32,9 +52,11 @@ Sistem monitoring ketinggian air dan pengendalian pintu air otomatis berbasis ES
 
 ## Logika Status Sistem
 
-- NORMAL: Ketinggian air aman (> 100 cm) dan curah hujan rendah. Pintu air tertutup (0 derajat), pompa mati.
-- SIAGA: Jarak air 60-100 cm atau curah hujan sedang. Pintu air terbuka sebagian (45 derajat).
-- BAHAYA: Jarak air <= 60 cm atau curah hujan tinggi. Pintu air terbuka penuh (90 derajat), pompa menyala, alarm aktif.
+Penentuan status didasarkan pada pembacaan jarak sensor ultrasonik ke permukaan air (HC-SR04) dan intensitas curah hujan analog:
+
+- **NORMAL**: Jarak sensor ke permukaan air aman (> 100 cm) dan curah hujan rendah. Pintu air tertutup (0 derajat), pompa mati, LED dan buzzer nonaktif.
+- **SIAGA**: Jarak sensor ke air 60–100 cm atau curah hujan sedang (ADC >= 2048 / hujan >= 50%). Pintu air terbuka sebagian (45 derajat), LED menyala, pompa mati.
+- **BAHAYA**: Jarak sensor ke air <= 60 cm atau curah hujan lebat (ADC >= 3276 / hujan >= 80%) atau terjadi kesalahan pembacaan sensor ultrasonik. Pintu air terbuka penuh (90 derajat), pompa aktif menyala, alarm buzzer berbunyi, dan LED menyala.
 
 ## Struktur Direktori
 
@@ -90,14 +112,17 @@ Dashboard akan berlangganan ke topik MQTT dan menampilkan grafik tren ketinggian
 
 ## Format Payload MQTT
 
-Data dikirimkan ke topik `samsung/infokosumar/banjir` dalam format JSON:
+Data telemetri dikirimkan secara berkala setiap 3 detik ke topik `samsung/infokosumar/banjir` dalam format JSON:
 
 ```json
 {
   "jarak_cm": 45.2,
+  "hujan_adc": 3072,
   "hujan_persen": 75,
   "status": "BAHAYA",
   "servo_derajat": 90,
   "pompa": true
 }
 ```
+
+> **Catatan:** Jika sensor ultrasonik mengalami *timeout* atau gagal membaca, nilai `"jarak_cm"` akan dikirim berupa `null`, dan sistem secara otomatis masuk ke kondisi *fail-safe* dengan status `BAHAYA`.

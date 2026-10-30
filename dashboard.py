@@ -212,7 +212,7 @@ def run_live_dashboard():
             else:
                 cards = [
                     ("STATUS SISTEM", curr_status, status_color, status_bg),
-                    ("JARAK AIR", jarak_str, COLOR_CYAN, "#082f49"),
+                    ("JARAK SENSOR KE PERMUKAAN AIR", jarak_str, COLOR_CYAN, "#082f49"),
                     ("CURAH HUJAN", f"{curr_hujan} %", COLOR_INDIGO, "#1e1b4b"),
                     ("PINTU AIR", f"{curr_servo}°", COLOR_PURPLE, "#3b0764"),
                     ("POMPA RELAY", pompa_str, pompa_color, pompa_bg)
@@ -234,11 +234,11 @@ def run_live_dashboard():
                         fontsize=f["kpi_val"], fontweight="bold", color=fg)
 
             ax_water.clear()
-            style_chart_ax(ax_water, "Ketinggian Permukaan Air (HC-SR04)", f)
+            style_chart_ax(ax_water, "Jarak Sensor ke Permukaan Air (HC-SR04)", f)
             ax_water.set_ylabel("Jarak Sensor (cm)", color=TEXT_MUTED, fontsize=f["label"])
 
             if len(times) > 1:
-                ax_water.plot(times, jarak_vals, color=COLOR_CYAN, linewidth=2.0, label="Permukaan Air (cm)")
+                ax_water.plot(times, jarak_vals, color=COLOR_CYAN, linewidth=2.0, label="Jarak Sensor (cm)")
                 ax_water.fill_between(times, jarak_vals, color=COLOR_CYAN, alpha=0.15)
                 ax_water.axhline(100.0, color=COLOR_ORANGE, linestyle="--", linewidth=1.1, label="Siaga (100cm)")
                 ax_water.axhline(60.0, color=COLOR_RED, linestyle="--", linewidth=1.1, label="Bahaya (60cm)")
